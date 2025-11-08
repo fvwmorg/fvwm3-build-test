@@ -84,3 +84,19 @@ jobs:
         echo "ISRELEASED=no" > .release-status
         git commit -am "build: set next version"
         git push
+    - name: Clone docs repository
+        uses: actions/checkout@v4
+        with:
+          repository: fvwmorg/fvwmorg.github.io
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: fvwmorg.github.io
+          fetch-depth: 0
+
+    - name: Generate & Commit manpages on website
+      working-directory: ./fvwmorg.github.io
+      run: |
+        ./meson-scripts/generate-manpages-website.sh \
+            ${GITHUB_WORKSPACE}/fvwmorg.github.io && \
+        git commit -a --author="Thomas Adam <thomas.adam@fvwm.org>" -m "[AUTO]: Update manpages for release ${{ env.versionRelease }}"
+        git push origin --dry-run
+
