@@ -32,7 +32,7 @@ jobs:
         echo "versionRelease=$(git show HEAD:./.current-version)" >> $GITHUB_ENV
     - name: Build artefacts
       run: |
-        meson setup --reconfigure build -Dmandoc=true -Dhtmldoc=true -Dgolang=enabled && \
+        meson setup --reconfigure compile -Dmandoc=true -Dhtmldoc=true -Dgolang=enabled && \
         meson compile -C compile && meson dist --formats gztar -C compile
     - name: Clone docs repository
       uses: actions/checkout@v4
