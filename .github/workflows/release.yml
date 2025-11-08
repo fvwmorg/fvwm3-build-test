@@ -46,7 +46,7 @@ jobs:
       working-directory: ./fvwmorg.github.io
       run: |
         set -euo pipefail
-        ./meson-scripts/generate-manpages-website.sh \
+        ${GITHUB_WORKSPACE}/fvwm3/meson-scripts/generate-manpages-website.sh \
             ${GITHUB_WORKSPACE}/fvwmorg.github.io
 
         # Only commit/push if there are changes
