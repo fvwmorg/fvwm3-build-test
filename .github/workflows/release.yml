@@ -50,7 +50,7 @@ jobs:
       run: |
         set -euo pipefail
         ${GITHUB_WORKSPACE}/fvwm3/meson-scripts/generate-manpages-website.sh \
-            ${GITHUB_WORKSPACE}/fvwmorg.github.io
+            ${GITHUB_WORKSPACE}/fvwm3
 
         # Only commit/push if there are changes
         git add -A
