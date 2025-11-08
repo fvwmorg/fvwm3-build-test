@@ -29,6 +29,7 @@ jobs:
     - name: Get Current Version (for release...)
       id: versionRelease
       run: |
+        cd fvwm3
         git fetch -q -n origin
         echo "versionRelease=$(git show HEAD:./.current-version)" >> $GITHUB_ENV
     - name: Build artefacts
