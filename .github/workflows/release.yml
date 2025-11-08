@@ -34,6 +34,7 @@ jobs:
         echo "versionRelease=$(git show HEAD:./.current-version)" >> $GITHUB_ENV
     - name: Build artefacts
       run: |
+        cd fvwm3
         meson setup --reconfigure compile -Dmandoc=true -Dhtmldoc=true -Dgolang=enabled && \
         meson compile -C compile && meson dist --formats gztar -C compile
     - name: Clone docs repository
