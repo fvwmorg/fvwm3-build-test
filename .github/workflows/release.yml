@@ -16,10 +16,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    - run: git config --global --add safe.directory ${GITHUB_WORKSPACE}
       with:
         fetch-depth: 0
         token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Make workspace safe for git
+      run: git config --global --add safe.directory ${GITHUB_WORKSPACE}
     - name: Repo Settings
       run:  |
         git config --global user.name "Thomas Adam"
@@ -32,21 +33,28 @@ jobs:
     - name: Build artefacts
       run: |
         meson setup --reconfigure build -Dmandoc=true -Dhtmldoc=true -Dgolang=enabled && \
-        meson compile -C build && meson dist --formats gztar -C build
+        meson compile -C compile && meson dist --formats gztar -C compile
     - name: Clone docs repository
-        uses: actions/checkout@v4
-        with:
-          repository: fvwmorg/fvwmorg.github.io
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: fvwmorg.github.io
-          fetch-depth: 0
+      uses: actions/checkout@v4
+      with:
+        repository: fvwmorg/fvwmorg.github.io
+        token: ${{ secrets.GITHUB_TOKEN }}
+        path: fvwmorg.github.io
+        fetch-depth: 0
 
     - name: Generate & Commit manpages on website
       working-directory: ./fvwmorg.github.io
       run: |
+        set -euo pipefail
         ./meson-scripts/generate-manpages-website.sh \
-            ${GITHUB_WORKSPACE}/fvwmorg.github.io && \
-        git commit -a --author="Thomas Adam <thomas.adam@fvwm.org>" -m "[AUTO]: Update manpages for release ${{ env.versionRelease }}"
-        git show
-        git push origin --dry-run
+            ${GITHUB_WORKSPACE}/fvwmorg.github.io
 
+        # Only commit/push if there are changes
+        git add -A
+        if git diff-index --quiet HEAD --; then
+          echo "No changes to commit"
+        else
+          git commit -a --author="Thomas Adam <thomas.adam@fvwm.org>" -m "[AUTO]: Update manpages for release ${{ env.versionRelease }}"
+          git show
+          git push origin --dry-run
+        fi
